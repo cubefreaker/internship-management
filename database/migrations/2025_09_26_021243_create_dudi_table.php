@@ -15,8 +15,9 @@ return new class extends Migration {
             $table->string('telepon', 20)->nullable();
             $table->string('email', 255)->nullable();
             $table->string('penanggung_jawab', 255)->nullable();
-            $table->enum('status', ['aktif', 'nonaktif', 'pending'])->default('pending');
+            $table->enum('status', ['aktif', 'tidak_aktif'])->default('aktif');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

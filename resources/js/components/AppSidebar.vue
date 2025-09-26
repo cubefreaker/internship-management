@@ -26,7 +26,7 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'DUDI',
-        href: '#', // TODO: Add proper route
+        href: '/dudi',
         icon: Building2,
         subtitle: 'Manajemen DUDI',
     },
