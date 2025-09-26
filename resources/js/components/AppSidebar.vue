@@ -14,7 +14,7 @@ import {
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
-import { BookOpen, Folder, LayoutGrid } from 'lucide-vue-next';
+import { BookOpen, Folder, LayoutGrid, Building2, Users, Settings } from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
 
 const mainNavItems: NavItem[] = [
@@ -22,21 +22,29 @@ const mainNavItems: NavItem[] = [
         title: 'Dashboard',
         href: dashboard(),
         icon: LayoutGrid,
+        subtitle: 'Ringkasan sistem',
+    },
+    {
+        title: 'DUDI',
+        href: '#', // TODO: Add proper route
+        icon: Building2,
+        subtitle: 'Manajemen DUDI',
+    },
+    {
+        title: 'Pengguna',
+        href: '#', // TODO: Add proper route
+        icon: Users,
+        subtitle: 'Manajemen user',
+    },
+    {
+        title: 'Pengaturan',
+        href: '#', // TODO: Add proper route
+        icon: Settings,
+        subtitle: 'Konfigurasi sistem',
     },
 ];
 
-const footerNavItems: NavItem[] = [
-    {
-        title: 'Github Repo',
-        href: 'https://github.com/laravel/vue-starter-kit',
-        icon: Folder,
-    },
-    {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#vue',
-        icon: BookOpen,
-    },
-];
+const footerNavItems: NavItem[] = [];
 </script>
 
 <template>
@@ -58,7 +66,15 @@ const footerNavItems: NavItem[] = [
         </SidebarContent>
 
         <SidebarFooter>
-            <NavFooter :items="footerNavItems" />
+            <div class="px-2 py-4">
+                <div class="flex items-center gap-2 text-sm text-gray-600 mb-2">
+                    <div class="h-2 w-2 rounded-full bg-green-500"></div>
+                    <span class="font-medium">SMK Negeri 1 Surabaya</span>
+                </div>
+                <div class="text-xs text-gray-500 ml-4">
+                    Sistem Pelaporan v1.0
+                </div>
+            </div>
             <NavUser />
         </SidebarFooter>
     </Sidebar>

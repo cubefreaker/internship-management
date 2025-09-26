@@ -19,7 +19,6 @@ const page = usePage();
 
 <template>
     <SidebarGroup class="px-2 py-0">
-        <SidebarGroupLabel>Platform</SidebarGroupLabel>
         <SidebarMenu>
             <SidebarMenuItem v-for="item in items" :key="item.title">
                 <SidebarMenuButton
@@ -27,9 +26,12 @@ const page = usePage();
                     :is-active="urlIsActive(item.href, page.url)"
                     :tooltip="item.title"
                 >
-                    <Link :href="item.href">
-                        <component :is="item.icon" />
-                        <span>{{ item.title }}</span>
+                    <Link :href="item.href" class="flex flex-col items-start">
+                        <div class="flex items-center gap-2">
+                            <component :is="item.icon" />
+                            <span>{{ item.title }}</span>
+                        </div>
+                        <span v-if="item.subtitle" class="text-xs text-muted-foreground ml-6">{{ item.subtitle }}</span>
                     </Link>
                 </SidebarMenuButton>
             </SidebarMenuItem>
