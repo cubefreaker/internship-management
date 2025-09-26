@@ -18,5 +18,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dudi/{dudi}/siswa-magang', [App\Http\Controllers\DudiController::class, 'getSiswaMagang'])->name('dudi.siswa-magang');
 });
 
+// User Management Routes
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::resource('users', App\Http\Controllers\UserController::class);
+});
+
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';

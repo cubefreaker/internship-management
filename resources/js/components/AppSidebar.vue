@@ -32,7 +32,7 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Pengguna',
-        href: '#', // TODO: Add proper route
+        href: '/users',
         icon: Users,
         subtitle: 'Manajemen user',
     },
