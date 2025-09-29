@@ -89,7 +89,13 @@ const getStatusColor = (status: string) => {
     <Head title="Dashboard" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
-        <div class="flex h-full flex-1 flex-col gap-6 overflow-x-auto p-6">
+        <div v-if="!['admin', 'guru'].includes(user.role)" class="flex h-full flex-1 flex-col gap-6 overflow-x-auto p-6">
+            <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                <div class="text-3xl font-bold text-gray-900">Selamat datang, {{ user.name }}</div>
+            </div>
+        </div>
+        
+        <div v-else class="flex h-full flex-1 flex-col gap-6 overflow-x-auto p-6">
             <!-- Header Section -->
             <div class="flex flex-col gap-4">
                 <div>
@@ -104,9 +110,9 @@ const getStatusColor = (status: string) => {
                 <div class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-sm font-medium text-gray-600">Total Siswa</p>
+                            <p class="text-sm font-medium text-gray-600">{{ user.role === 'guru' ? 'Total Siswa Bimbingan' : 'Total Siswa' }}</p>
                             <p class="text-3xl font-bold text-gray-900">{{ props.stats.totalStudents }}</p>
-                            <p class="text-sm text-gray-500">Seluruh siswa terdaftar</p>
+                            <p class="text-sm text-gray-500">{{ user.role === 'guru' ? 'Siswa di bawah bimbingan' : 'Seluruh siswa terdaftar' }}</p>
                         </div>
                         <div class="h-12 w-12 rounded-lg bg-blue-100 flex items-center justify-center">
                             <Users class="h-6 w-6 text-blue-600" />
@@ -120,7 +126,7 @@ const getStatusColor = (status: string) => {
                         <div>
                             <p class="text-sm font-medium text-gray-600">DUDI Partner</p>
                             <p class="text-3xl font-bold text-gray-900">{{ props.stats.dudiPartners }}</p>
-                            <p class="text-sm text-gray-500">Perusahaan mitra</p>
+                            <p class="text-sm text-gray-500">{{ user.role === 'guru' ? 'Perusahaan mitra siswa bimbingan' : 'Perusahaan mitra' }}</p>
                         </div>
                         <div class="h-12 w-12 rounded-lg bg-green-100 flex items-center justify-center">
                             <Building2 class="h-6 w-6 text-green-600" />
@@ -134,7 +140,7 @@ const getStatusColor = (status: string) => {
                         <div>
                             <p class="text-sm font-medium text-gray-600">Siswa Magang</p>
                             <p class="text-3xl font-bold text-gray-900">{{ props.stats.activeInterns }}</p>
-                            <p class="text-sm text-gray-500">Sedang aktif magang</p>
+                            <p class="text-sm text-gray-500">{{ user.role === 'guru' ? 'Siswa bimbingan aktif magang' : 'Sedang aktif magang' }}</p>
                         </div>
                         <div class="h-12 w-12 rounded-lg bg-purple-100 flex items-center justify-center">
                             <GraduationCap class="h-6 w-6 text-purple-600" />
@@ -148,7 +154,7 @@ const getStatusColor = (status: string) => {
                         <div>
                             <p class="text-sm font-medium text-gray-600">Logbook Hari Ini</p>
                             <p class="text-3xl font-bold text-gray-900">{{ props.stats.todayLogbooks }}</p>
-                            <p class="text-sm text-gray-500">Laporan masuk hari ini</p>
+                            <p class="text-sm text-gray-500">{{ user.role === 'guru' ? 'Laporan siswa bimbingan hari ini' : 'Laporan masuk hari ini' }}</p>
                         </div>
                         <div class="h-12 w-12 rounded-lg bg-orange-100 flex items-center justify-center">
                             <BookOpen class="h-6 w-6 text-orange-600" />
@@ -171,7 +177,7 @@ const getStatusColor = (status: string) => {
                                  class="flex items-center justify-between rounded-lg border border-gray-100 p-4">
                                 <div class="flex items-center gap-3">
                                     <div class="h-10 w-10 rounded-lg bg-blue-100 flex items-center justify-center">
-                                        <GraduationCap class="h-5 w-5 text-blue-600" />
+                                        <span class="text-sm font-medium text-blue-600">{{ internship.studentName.charAt(0) }}</span>
                                     </div>
                                     <div>
                                         <p class="font-medium text-gray-900">{{ internship.studentName }}</p>
@@ -179,7 +185,7 @@ const getStatusColor = (status: string) => {
                                         <p class="text-xs text-gray-500">{{ internship.startDate }} - {{ internship.endDate }}</p>
                                     </div>
                                 </div>
-                                <span :class="['px-2 py-1 rounded-full text-xs font-medium', getStatusColor(internship.status)]">
+                                <span class="px-2 py-1 rounded-full bg-green-100 text-green-800 text-xs font-medium">
                                     {{ internship.status }}
                                 </span>
                             </div>
@@ -189,7 +195,6 @@ const getStatusColor = (status: string) => {
                                 <GraduationCap class="h-8 w-8 text-gray-400" />
                             </div>
                             <p class="text-gray-500 text-sm">Belum ada data magang terbaru</p>
-                            <p class="text-gray-400 text-xs mt-1">Data akan muncul ketika ada siswa yang memulai magang</p>
                         </div>
                     </div>
                 </div>
@@ -200,20 +205,18 @@ const getStatusColor = (status: string) => {
                         <Building2 class="h-5 w-5 text-gray-600" />
                         <h3 class="text-lg font-semibold text-gray-900">DUDI Aktif</h3>
                     </div>
-                    <div class="space-y-4">
+                    <div class="space-y-3 max-h-96 overflow-y-auto">
                         <div v-if="props.activeDudi.length > 0">
                             <div v-for="dudi in props.activeDudi" :key="dudi.id" 
-                                 class="rounded-lg border border-gray-100 p-4">
-                                <div class="flex items-start justify-between">
-                                    <div class="flex-1">
-                                        <h4 class="font-medium text-gray-900">{{ dudi.name }}</h4>
-                                        <p class="text-sm text-gray-600">{{ dudi.address }}</p>
-                                        <p class="text-sm text-gray-500">{{ dudi.phone }}</p>
-                                    </div>
-                                    <span class="px-2 py-1 rounded-full bg-yellow-100 text-yellow-800 text-xs font-medium">
-                                        {{ dudi.studentCount }} siswa
-                                    </span>
+                                 class="flex items-center justify-between rounded-lg border border-gray-100 p-3">
+                                <div class="flex-1">
+                                    <h4 class="font-medium text-gray-900 text-sm">{{ dudi.name }}</h4>
+                                    <p class="text-xs text-gray-600">{{ dudi.address }}</p>
+                                    <p class="text-xs text-gray-500">{{ dudi.phone }}</p>
                                 </div>
+                                <span class="px-2 py-1 rounded-full bg-yellow-100 text-yellow-800 text-xs font-medium">
+                                    {{ dudi.studentCount }}
+                                </span>
                             </div>
                         </div>
                         <div v-else class="text-center py-8">
@@ -221,7 +224,6 @@ const getStatusColor = (status: string) => {
                                 <Building2 class="h-8 w-8 text-gray-400" />
                             </div>
                             <p class="text-gray-500 text-sm">Belum ada DUDI aktif</p>
-                            <p class="text-gray-400 text-xs mt-1">Data akan muncul ketika ada DUDI yang memiliki siswa magang</p>
                         </div>
                     </div>
                 </div>
@@ -239,8 +241,15 @@ const getStatusColor = (status: string) => {
                              class="rounded-lg border border-gray-100 p-4">
                             <div class="flex items-start justify-between">
                                 <div class="flex-1">
-                                    <p class="font-medium text-gray-900">{{ logbook.task }}</p>
-                                    <p class="text-sm text-gray-600 mt-1">{{ logbook.date }}</p>
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <div class="h-8 w-8 rounded-lg bg-green-100 flex items-center justify-center">
+                                            <span class="text-xs font-medium text-green-600">LB</span>
+                                        </div>
+                                        <div>
+                                            <p class="font-medium text-gray-900 text-sm">{{ logbook.task }}</p>
+                                            <p class="text-xs text-gray-600">{{ logbook.date }}</p>
+                                        </div>
+                                    </div>
                                     <p class="text-sm text-gray-500 mt-1">Kendala: {{ logbook.obstacle }}</p>
                                 </div>
                                 <span :class="['px-2 py-1 rounded-full text-xs font-medium', getStatusColor(logbook.status)]">
