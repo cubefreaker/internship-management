@@ -101,7 +101,6 @@ class DashboardController extends Controller
             'recentInternships' => $recentInternships,
             'activeDudi' => $activeDudi,
             'recentLogbooks' => $recentLogbooks,
-            'userRole' => 'admin'
         ]);
     }
 
@@ -124,7 +123,6 @@ class DashboardController extends Controller
                 'recentInternships' => [],
                 'activeDudi' => [],
                 'recentLogbooks' => [],
-                'userRole' => 'guru'
             ]);
         }
 
@@ -218,7 +216,6 @@ class DashboardController extends Controller
             'recentInternships' => $recentInternships,
             'activeDudi' => $activeDudi,
             'recentLogbooks' => $recentLogbooks,
-            'userRole' => 'guru'
         ]);
     }
 }
