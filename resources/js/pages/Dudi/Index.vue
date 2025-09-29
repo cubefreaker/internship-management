@@ -31,6 +31,7 @@ const props = defineProps<{
         dudi_aktif: number;
         dudi_tidak_aktif: number;
         total_siswa_magang: number;
+        rata_rata_siswa?: number;
     };
     filters: {
         search?: string;
@@ -38,6 +39,8 @@ const props = defineProps<{
         per_page?: number;
     };
 }>();
+
+const user = computed(() => page.props.auth?.user);
 
 const search = ref(props.filters.search || '');
 const perPage = ref(props.filters.per_page || 5);
@@ -148,7 +151,7 @@ const getStatusIcon = (status: string) => {
             </div>
 
             <!-- Stats Cards -->
-            <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+            <div :class="'grid grid-cols-1 gap-6 md:grid-cols-2 ' + (user.role === 'admin' ? 'lg:grid-cols-4' : 'lg:grid-cols-3')">
                 <!-- Total DUDI Card -->
                 <Card>
                     <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -162,7 +165,7 @@ const getStatusIcon = (status: string) => {
                 </Card>
 
                 <!-- DUDI Aktif Card -->
-                <Card>
+                <Card v-if="user.role === 'admin'">
                     <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle class="text-sm font-medium text-gray-600">DUDI Aktif</CardTitle>
                         <CheckCircle class="h-4 w-4 text-green-600" />
@@ -174,7 +177,7 @@ const getStatusIcon = (status: string) => {
                 </Card>
 
                 <!-- DUDI Tidak Aktif Card -->
-                <Card>
+                <Card v-if="user.role === 'admin'">
                     <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle class="text-sm font-medium text-gray-600">DUDI Tidak Aktif</CardTitle>
                         <XCircle class="h-4 w-4 text-red-600" />
@@ -196,6 +199,18 @@ const getStatusIcon = (status: string) => {
                         <p class="text-xs text-gray-500">Siswa magang aktif</p>
                     </CardContent>
                 </Card>
+
+                <!-- Rata-rata Siswa per Perusahaan Card (only for guru) -->
+                <Card v-if="user.role === 'guru'">
+                    <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle class="text-sm font-medium text-gray-600">Rata-rata Siswa</CardTitle>
+                        <Users class="h-4 w-4 text-purple-600" />
+                    </CardHeader>
+                    <CardContent>
+                        <div class="text-2xl font-bold text-gray-900">{{ stats.rata_rata_siswa }}</div>
+                        <p class="text-xs text-gray-500">Per perusahaan</p>
+                    </CardContent>
+                </Card>
             </div>
 
             <!-- Daftar DUDI Section -->
@@ -203,7 +218,7 @@ const getStatusIcon = (status: string) => {
                 <CardHeader>
                     <div class="flex items-center justify-between">
                         <CardTitle>Daftar DUDI</CardTitle>
-                        <Button @click="handleAddDudi" class="bg-blue-600 hover:bg-blue-700">
+                        <Button v-if="user.role === 'admin'" @click="handleAddDudi" class="bg-blue-600 hover:bg-blue-700">
                             <Plus class="h-4 w-4 mr-2" />
                             Tambah DUDI
                         </Button>
@@ -246,9 +261,9 @@ const getStatusIcon = (status: string) => {
                                     <th class="text-left py-3 px-4 font-medium text-gray-600">Perusahaan</th>
                                     <th class="text-left py-3 px-4 font-medium text-gray-600">Kontak</th>
                                     <th class="text-left py-3 px-4 font-medium text-gray-600">Penanggung Jawab</th>
-                                    <th class="text-left py-3 px-4 font-medium text-gray-600">Status</th>
+                                    <th v-if="user.role === 'admin'" class="text-left py-3 px-4 font-medium text-gray-600">Status</th>
                                     <th class="text-left py-3 px-4 font-medium text-gray-600">Siswa Magang</th>
-                                    <th class="text-left py-3 px-4 font-medium text-gray-600">Aksi</th>
+                                    <th v-if="user.role === 'admin'" class="text-left py-3 px-4 font-medium text-gray-600">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -268,7 +283,7 @@ const getStatusIcon = (status: string) => {
                                     <td class="py-3 px-4">
                                         <div class="text-sm text-gray-900">{{ dudi.penanggung_jawab }}</div>
                                     </td>
-                                    <td class="py-3 px-4">
+                                    <td v-if="user.role === 'admin'" class="py-3 px-4">
                                         <Badge :class="getStatusBadge(dudi.status)">
                                             {{ dudi.status === 'aktif' ? 'Aktif' : 'Tidak Aktif' }}
                                         </Badge>
@@ -280,10 +295,10 @@ const getStatusIcon = (status: string) => {
                                             @click="handleViewSiswaMagang(dudi)"
                                             class="h-8 w-8 rounded-full bg-yellow-100 text-yellow-800 hover:bg-yellow-200 border-yellow-200"
                                         >
-                                            {{ dudi.total_siswa_magang || 0 }}
+                                            {{ user.role === 'guru' ? (dudi.siswa_bimbingan_count || 0) : (dudi.total_siswa_magang || 0) }}
                                         </Button>
                                     </td>
-                                    <td class="py-3 px-4">
+                                    <td v-if="user.role === 'admin'" class="py-3 px-4">
                                         <div class="flex items-center gap-2">
                                             <Button
                                                 variant="ghost"
