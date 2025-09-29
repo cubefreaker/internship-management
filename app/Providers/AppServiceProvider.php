@@ -2,7 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\SchoolSettings;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
+use Inertia\Inertia;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,6 +22,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Share school settings data with all Inertia responses
+        Inertia::share('schoolSettings', function () {
+            return SchoolSettings::first() ?? new SchoolSettings();
+        });
     }
 }

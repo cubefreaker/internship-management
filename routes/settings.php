@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Settings\PasswordController;
 use App\Http\Controllers\Settings\ProfileController;
+use App\Http\Controllers\Settings\SchoolSettingsController;
 use App\Http\Controllers\Settings\TwoFactorAuthenticationController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -25,4 +26,10 @@ Route::middleware('auth')->group(function () {
 
     Route::get('settings/two-factor', [TwoFactorAuthenticationController::class, 'show'])
         ->name('two-factor.show');
+        
+    Route::get('settings/school', [SchoolSettingsController::class, 'edit'])
+        ->name('school-settings.edit');
+        
+    Route::post('settings/school', [SchoolSettingsController::class, 'update'])
+        ->name('school-settings.update');
 });

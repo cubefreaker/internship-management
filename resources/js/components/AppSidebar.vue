@@ -13,9 +13,14 @@ import {
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
-import { Link } from '@inertiajs/vue3';
-import { BookOpen, Folder, LayoutGrid, Building2, Users, Settings } from 'lucide-vue-next';
+import { Link, usePage } from '@inertiajs/vue3';
+import { BookOpen, Folder, LayoutGrid, Building2, Users, Settings, School } from 'lucide-vue-next';
+import { computed } from 'vue';
 import AppLogo from './AppLogo.vue';
+
+// Get school settings from shared data
+const page = usePage();
+const schoolSettings = computed(() => page.props.schoolSettings);
 
 const mainNavItems: NavItem[] = [
     {
@@ -37,10 +42,10 @@ const mainNavItems: NavItem[] = [
         subtitle: 'Manajemen user',
     },
     {
-        title: 'Pengaturan',
-        href: '#', // TODO: Add proper route
-        icon: Settings,
-        subtitle: 'Konfigurasi sistem',
+        title: 'Pengaturan Sekolah',
+        href: '/settings/school',
+        icon: School,
+        subtitle: 'Konfigurasi sekolah',
     },
 ];
 
@@ -69,7 +74,7 @@ const footerNavItems: NavItem[] = [];
             <div class="px-2 py-4">
                 <div class="flex items-center gap-2 text-sm text-gray-600 mb-2">
                     <div class="h-2 w-2 rounded-full bg-green-500"></div>
-                    <span class="font-medium">SMK Negeri 1 Surabaya</span>
+                    <span class="font-medium">{{ schoolSettings.nama_sekolah || 'Nama Sekolah' }}</span>
                 </div>
                 <div class="text-xs text-gray-500 ml-4">
                     Sistem Pelaporan v1.0
