@@ -6,6 +6,47 @@ import { Head, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import { Calendar, Users, Building2, GraduationCap, BookOpen, CheckCircle, Clock, XCircle } from 'lucide-vue-next';
 
+interface Stats {
+    totalStudents: number;
+    dudiPartners: number;
+    activeInterns: number;
+    todayLogbooks: number;
+}
+
+interface Internship {
+    id: number;
+    studentName: string;
+    companyName: string;
+    startDate: string;
+    endDate: string;
+    status: string;
+}
+
+interface DudiData {
+    id: number;
+    name: string;
+    address: string;
+    phone: string;
+    studentCount: number;
+}
+
+interface LogbookData {
+    id: number;
+    task: string;
+    date: string;
+    obstacle: string;
+    status: string;
+}
+
+interface Props {
+    stats: Stats;
+    recentInternships: Internship[];
+    activeDudi: DudiData[];
+    recentLogbooks: LogbookData[];
+}
+
+const props = defineProps<Props>();
+
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Dashboard',
@@ -15,6 +56,8 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 const page = usePage();
 const user = computed(() => page.props.auth.user);
+const schoolSettings = computed(() => page.props.schoolSettings);
+
 
 // Get current date
 const currentDate = computed(() => {
@@ -26,89 +69,6 @@ const currentDate = computed(() => {
         day: 'numeric'
     });
 });
-
-// Mock data for demonstration
-const stats = {
-    totalStudents: 150,
-    dudiPartners: 45,
-    activeInterns: 120,
-    todayLogbooks: 85
-};
-
-const recentInternships = [
-    {
-        id: 1,
-        studentName: 'Ahmad Rizki',
-        companyName: 'PT. Teknologi Nusantara',
-        startDate: '15/1/2024',
-        endDate: '15/4/2024',
-        status: 'Aktif'
-    },
-    {
-        id: 2,
-        studentName: 'Siti Nurhaliza',
-        companyName: 'CV. Digital Kreativa',
-        startDate: '20/1/2024',
-        endDate: '20/4/2024',
-        status: 'Aktif'
-    },
-    {
-        id: 3,
-        studentName: 'Budi Santoso',
-        companyName: 'PT. Inovasi Mandiri',
-        startDate: '25/1/2024',
-        endDate: '25/4/2024',
-        status: 'Aktif'
-    }
-];
-
-const activeDudi = [
-    {
-        id: 1,
-        name: 'PT. Teknologi Nusantara',
-        address: 'Jl. HR Muhammad No. 123, Surabaya',
-        phone: '031-5551234',
-        studentCount: 8
-    },
-    {
-        id: 2,
-        name: 'CV. Digital Kreativa',
-        address: 'Jl. Raya Darmo No. 456, Surabaya',
-        phone: '031-5555678',
-        studentCount: 5
-    },
-    {
-        id: 3,
-        name: 'PT. Inovasi Mandiri',
-        address: 'Jl. Diponegoro No. 789, Surabaya',
-        phone: '031-5559012',
-        studentCount: 12
-    }
-];
-
-const recentLogbooks = [
-    {
-        id: 1,
-        task: 'Mempelajari sistem database dan melakukan backup data harian',
-        date: '21/7/2024',
-        obstacle: 'Tidak ada kendala berarti',
-        status: 'Disetujui'
-    },
-    {
-        id: 2,
-        task: 'Membuat design mockup untuk website perusahaan',
-        date: '20/7/2024',
-        obstacle: 'Software design masih belum familiar',
-        status: 'Pending'
-    },
-    {
-        id: 3,
-        task: 'Mengikuti training keamanan sistem informasi',
-        date: '19/7/2024',
-        obstacle: 'Materi cukup kompleks untuk dipahami',
-        status: 'Ditolak'
-    }
-];
 
 const getStatusColor = (status: string) => {
     switch (status) {
@@ -145,7 +105,7 @@ const getStatusColor = (status: string) => {
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm font-medium text-gray-600">Total Siswa</p>
-                            <p class="text-3xl font-bold text-gray-900">{{ stats.totalStudents }}</p>
+                            <p class="text-3xl font-bold text-gray-900">{{ props.stats.totalStudents }}</p>
                             <p class="text-sm text-gray-500">Seluruh siswa terdaftar</p>
                         </div>
                         <div class="h-12 w-12 rounded-lg bg-blue-100 flex items-center justify-center">
@@ -159,7 +119,7 @@ const getStatusColor = (status: string) => {
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm font-medium text-gray-600">DUDI Partner</p>
-                            <p class="text-3xl font-bold text-gray-900">{{ stats.dudiPartners }}</p>
+                            <p class="text-3xl font-bold text-gray-900">{{ props.stats.dudiPartners }}</p>
                             <p class="text-sm text-gray-500">Perusahaan mitra</p>
                         </div>
                         <div class="h-12 w-12 rounded-lg bg-green-100 flex items-center justify-center">
@@ -173,7 +133,7 @@ const getStatusColor = (status: string) => {
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm font-medium text-gray-600">Siswa Magang</p>
-                            <p class="text-3xl font-bold text-gray-900">{{ stats.activeInterns }}</p>
+                            <p class="text-3xl font-bold text-gray-900">{{ props.stats.activeInterns }}</p>
                             <p class="text-sm text-gray-500">Sedang aktif magang</p>
                         </div>
                         <div class="h-12 w-12 rounded-lg bg-purple-100 flex items-center justify-center">
@@ -187,7 +147,7 @@ const getStatusColor = (status: string) => {
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm font-medium text-gray-600">Logbook Hari Ini</p>
-                            <p class="text-3xl font-bold text-gray-900">{{ stats.todayLogbooks }}</p>
+                            <p class="text-3xl font-bold text-gray-900">{{ props.stats.todayLogbooks }}</p>
                             <p class="text-sm text-gray-500">Laporan masuk hari ini</p>
                         </div>
                         <div class="h-12 w-12 rounded-lg bg-orange-100 flex items-center justify-center">
@@ -206,21 +166,30 @@ const getStatusColor = (status: string) => {
                         <h3 class="text-lg font-semibold text-gray-900">Magang Terbaru</h3>
                     </div>
                     <div class="space-y-4">
-                        <div v-for="internship in recentInternships" :key="internship.id" 
-                             class="flex items-center justify-between rounded-lg border border-gray-100 p-4">
-                            <div class="flex items-center gap-3">
-                                <div class="h-10 w-10 rounded-lg bg-blue-100 flex items-center justify-center">
-                                    <GraduationCap class="h-5 w-5 text-blue-600" />
+                        <div v-if="props.recentInternships.length > 0">
+                            <div v-for="internship in props.recentInternships" :key="internship.id" 
+                                 class="flex items-center justify-between rounded-lg border border-gray-100 p-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="h-10 w-10 rounded-lg bg-blue-100 flex items-center justify-center">
+                                        <GraduationCap class="h-5 w-5 text-blue-600" />
+                                    </div>
+                                    <div>
+                                        <p class="font-medium text-gray-900">{{ internship.studentName }}</p>
+                                        <p class="text-sm text-gray-600">{{ internship.companyName }}</p>
+                                        <p class="text-xs text-gray-500">{{ internship.startDate }} - {{ internship.endDate }}</p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <p class="font-medium text-gray-900">{{ internship.studentName }}</p>
-                                    <p class="text-sm text-gray-600">{{ internship.companyName }}</p>
-                                    <p class="text-xs text-gray-500">{{ internship.startDate }} - {{ internship.endDate }}</p>
-                                </div>
+                                <span :class="['px-2 py-1 rounded-full text-xs font-medium', getStatusColor(internship.status)]">
+                                    {{ internship.status }}
+                                </span>
                             </div>
-                            <span :class="['px-2 py-1 rounded-full text-xs font-medium', getStatusColor(internship.status)]">
-                                {{ internship.status }}
-                            </span>
+                        </div>
+                        <div v-else class="text-center py-8">
+                            <div class="h-16 w-16 mx-auto rounded-lg bg-gray-100 flex items-center justify-center mb-4">
+                                <GraduationCap class="h-8 w-8 text-gray-400" />
+                            </div>
+                            <p class="text-gray-500 text-sm">Belum ada data magang terbaru</p>
+                            <p class="text-gray-400 text-xs mt-1">Data akan muncul ketika ada siswa yang memulai magang</p>
                         </div>
                     </div>
                 </div>
@@ -232,18 +201,27 @@ const getStatusColor = (status: string) => {
                         <h3 class="text-lg font-semibold text-gray-900">DUDI Aktif</h3>
                     </div>
                     <div class="space-y-4">
-                        <div v-for="dudi in activeDudi" :key="dudi.id" 
-                             class="rounded-lg border border-gray-100 p-4">
-                            <div class="flex items-start justify-between">
-                                <div class="flex-1">
-                                    <h4 class="font-medium text-gray-900">{{ dudi.name }}</h4>
-                                    <p class="text-sm text-gray-600">{{ dudi.address }}</p>
-                                    <p class="text-sm text-gray-500">{{ dudi.phone }}</p>
+                        <div v-if="props.activeDudi.length > 0">
+                            <div v-for="dudi in props.activeDudi" :key="dudi.id" 
+                                 class="rounded-lg border border-gray-100 p-4">
+                                <div class="flex items-start justify-between">
+                                    <div class="flex-1">
+                                        <h4 class="font-medium text-gray-900">{{ dudi.name }}</h4>
+                                        <p class="text-sm text-gray-600">{{ dudi.address }}</p>
+                                        <p class="text-sm text-gray-500">{{ dudi.phone }}</p>
+                                    </div>
+                                    <span class="px-2 py-1 rounded-full bg-yellow-100 text-yellow-800 text-xs font-medium">
+                                        {{ dudi.studentCount }} siswa
+                                    </span>
                                 </div>
-                                <span class="px-2 py-1 rounded-full bg-yellow-100 text-yellow-800 text-xs font-medium">
-                                    {{ dudi.studentCount }} siswa
-                                </span>
                             </div>
+                        </div>
+                        <div v-else class="text-center py-8">
+                            <div class="h-16 w-16 mx-auto rounded-lg bg-gray-100 flex items-center justify-center mb-4">
+                                <Building2 class="h-8 w-8 text-gray-400" />
+                            </div>
+                            <p class="text-gray-500 text-sm">Belum ada DUDI aktif</p>
+                            <p class="text-gray-400 text-xs mt-1">Data akan muncul ketika ada DUDI yang memiliki siswa magang</p>
                         </div>
                     </div>
                 </div>
@@ -256,18 +234,27 @@ const getStatusColor = (status: string) => {
                     <h3 class="text-lg font-semibold text-gray-900">Logbook Terbaru</h3>
                 </div>
                 <div class="space-y-4">
-                    <div v-for="logbook in recentLogbooks" :key="logbook.id" 
-                         class="rounded-lg border border-gray-100 p-4">
-                        <div class="flex items-start justify-between">
-                            <div class="flex-1">
-                                <p class="font-medium text-gray-900">{{ logbook.task }}</p>
-                                <p class="text-sm text-gray-600 mt-1">{{ logbook.date }}</p>
-                                <p class="text-sm text-gray-500 mt-1">Kendala: {{ logbook.obstacle }}</p>
+                    <div v-if="props.recentLogbooks.length > 0">
+                        <div v-for="logbook in props.recentLogbooks" :key="logbook.id" 
+                             class="rounded-lg border border-gray-100 p-4">
+                            <div class="flex items-start justify-between">
+                                <div class="flex-1">
+                                    <p class="font-medium text-gray-900">{{ logbook.task }}</p>
+                                    <p class="text-sm text-gray-600 mt-1">{{ logbook.date }}</p>
+                                    <p class="text-sm text-gray-500 mt-1">Kendala: {{ logbook.obstacle }}</p>
+                                </div>
+                                <span :class="['px-2 py-1 rounded-full text-xs font-medium', getStatusColor(logbook.status)]">
+                                    {{ logbook.status }}
+                                </span>
                             </div>
-                            <span :class="['px-2 py-1 rounded-full text-xs font-medium', getStatusColor(logbook.status)]">
-                                {{ logbook.status }}
-                            </span>
                         </div>
+                    </div>
+                    <div v-else class="text-center py-8">
+                        <div class="h-16 w-16 mx-auto rounded-lg bg-gray-100 flex items-center justify-center mb-4">
+                            <BookOpen class="h-8 w-8 text-gray-400" />
+                        </div>
+                        <p class="text-gray-500 text-sm">Belum ada logbook terbaru</p>
+                        <p class="text-gray-400 text-xs mt-1">Data akan muncul ketika siswa mulai mengisi logbook</p>
                     </div>
                 </div>
             </div>
