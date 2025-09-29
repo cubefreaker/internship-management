@@ -3,7 +3,6 @@ import { ref, watch } from 'vue';
 import { router, usePage } from '@inertiajs/vue3';
 import { Head } from '@inertiajs/vue3';
 
-import HeadingSmall from '@/components/HeadingSmall.vue';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -103,10 +102,15 @@ const submitForm = () => {
         <Head title="Pengaturan Sekolah" />
 
         <div class="px-4 py-6">
-            <HeadingSmall
-                title="Pengaturan Sekolah"
-                description="Kelola informasi sekolah dan lihat pratinjau tampilan"
-            />
+            <!-- Header Section -->
+            <div class="flex flex-col gap-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-900">Pengaturan Sekolah</h1>
+                        <p class="text-gray-600">Kelola informasi sekolah dan lihat pratinjau tampilan</p>
+                    </div>
+                </div>
+            </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-6">
                 <!-- Left Column - Form -->

@@ -141,8 +141,8 @@ const getStatusIcon = (status: string) => {
             <div class="flex flex-col gap-4">
                 <div class="flex items-center justify-between">
                     <div>
-                        <h1 class="text-3xl font-bold text-gray-900">Manajemen DUDI</h1>
-                        <p class="text-lg text-gray-600">Kelola data perusahaan mitra magang</p>
+                        <h1 class="text-2xl font-bold text-gray-900">Manajemen DUDI</h1>
+                        <p class="text-gray-600">Kelola data perusahaan mitra magang</p>
                     </div>
                 </div>
             </div>

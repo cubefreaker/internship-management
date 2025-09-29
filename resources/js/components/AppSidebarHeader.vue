@@ -4,6 +4,7 @@ import { SidebarTrigger } from '@/components/ui/sidebar';
 import type { BreadcrumbItemType } from '@/types';
 import { usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
+import { Users, Calendar } from 'lucide-vue-next';
 
 withDefaults(
     defineProps<{
@@ -17,6 +18,17 @@ withDefaults(
 // Get school settings from shared data
 const page = usePage();
 const schoolSettings = computed(() => page.props.schoolSettings);
+const user = computed(() => page.props.auth.user);
+// Get current date
+const currentDate = computed(() => {
+    const now = new Date();
+    return now.toLocaleDateString('id-ID', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+});
 </script>
 
 <template>
@@ -25,22 +37,27 @@ const schoolSettings = computed(() => page.props.schoolSettings);
     >
         <div class="flex items-center gap-2">
             <SidebarTrigger class="-ml-1" />
-            <template v-if="breadcrumbs && breadcrumbs.length > 0">
-                <Breadcrumbs :breadcrumbs="breadcrumbs" />
-            </template>
+            <div>
+                <h1 class="text-md font-semibold text-gray-900">{{ schoolSettings.nama_sekolah }}</h1>
+                <p class="text-xs text-gray-600">{{ schoolSettings.alamat }}</p>
+            </div>
         </div>
         
-        <!-- School Info in Header -->
-        <div v-if="schoolSettings?.nama_sekolah" class="hidden md:flex items-center gap-2">
-            <div v-if="schoolSettings?.logo_url" class="h-8 w-8 rounded overflow-hidden">
-                <img 
-                    :src="`/storage/${schoolSettings.logo_url}`" 
-                    alt="Logo Sekolah" 
-                    class="h-full w-full object-contain"
-                />
+        <div class="flex items-center gap-4">
+            <div class="text-right">
+                <div class="flex items-center gap-2 text-sm text-gray-600">
+                    <Calendar class="h-4 w-4" />
+                    <span>{{ currentDate }}</span>
+                </div>
             </div>
-            <div class="text-sm">
-                <span class="font-medium">{{ schoolSettings.nama_sekolah }}</span>
+            <div class="flex items-center gap-2">
+                <div class="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
+                    <Users class="h-4 w-4 text-blue-600" />
+                </div>
+                <div class="text-sm">
+                    <div class="font-medium text-gray-900">{{ user.name }}</div>
+                    <div class="text-gray-500">{{ user.role || 'Admin' }}</div>
+                </div>
             </div>
         </div>
     </header>

@@ -170,8 +170,8 @@ const getInitials = (name: string) => {
             <div class="flex flex-col gap-4">
                 <div class="flex items-center justify-between">
                     <div>
-                        <h1 class="text-3xl font-bold text-gray-900">Manajemen User</h1>
-                        <p class="text-lg text-gray-600">Kelola pengguna sistem</p>
+                        <h1 class="text-2xl font-bold text-gray-900">Manajemen User</h1>
+                        <p class="text-gray-600">Kelola pengguna sistem</p>
                     </div>
                 </div>
             </div>

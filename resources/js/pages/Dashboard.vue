@@ -132,30 +132,6 @@ const getStatusColor = (status: string) => {
         <div class="flex h-full flex-1 flex-col gap-6 overflow-x-auto p-6">
             <!-- Header Section -->
             <div class="flex flex-col gap-4">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h1 class="text-3xl font-bold text-gray-900">SMK Negeri 1 Surabaya</h1>
-                        <p class="text-lg text-gray-600">Sistem Manajemen Magang Siswa</p>
-                    </div>
-                    <div class="flex items-center gap-4">
-                        <div class="text-right">
-                            <div class="flex items-center gap-2 text-sm text-gray-600">
-                                <Calendar class="h-4 w-4" />
-                                <span>{{ currentDate }}</span>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <div class="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
-                                <Users class="h-4 w-4 text-blue-600" />
-                            </div>
-                            <div class="text-sm">
-                                <div class="font-medium text-gray-900">{{ user.name }}</div>
-                                <div class="text-gray-500">{{ user.role || 'Admin' }}</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
                 <div>
                     <h2 class="text-2xl font-semibold text-gray-900">Dashboard</h2>
                     <p class="text-gray-600">Selamat datang di sistem pelaporan magang siswa SMK Negeri 1 Surabaya</p>
