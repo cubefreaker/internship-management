@@ -49,7 +49,7 @@ const showSiswaModal = ref(false);
 const siswaMagang = ref<any[]>([]);
 
 // Watch for search changes and debounce
-let searchTimeout: NodeJS.Timeout;
+let searchTimeout: ReturnType<typeof setTimeout>;
 watch(search, (newValue) => {
     clearTimeout(searchTimeout);
     searchTimeout = setTimeout(() => {
