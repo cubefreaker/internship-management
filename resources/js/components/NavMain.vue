@@ -25,13 +25,16 @@ const page = usePage();
                     as-child
                     :is-active="urlIsActive(item.href, page.url)"
                     :tooltip="item.title"
+                    class="py-6"
                 >
-                    <Link :href="item.href" class="flex flex-col items-start">
+                    <Link :href="item.href">
                         <div class="flex items-center gap-2">
-                            <component :is="item.icon" />
-                            <span>{{ item.title }}</span>
+                            <component :is="item.icon" class="w-5 h-5" />
+                            <span class="flex flex-col">
+                                {{ item.title }}
+                                <span v-if="item.subtitle" class="text-xs text-muted-foreground">{{ item.subtitle }}</span>
+                            </span>
                         </div>
-                        <span v-if="item.subtitle" class="text-xs text-muted-foreground ml-6">{{ item.subtitle }}</span>
                     </Link>
                 </SidebarMenuButton>
             </SidebarMenuItem>
