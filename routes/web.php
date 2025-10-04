@@ -16,6 +16,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('dudi', App\Http\Controllers\DudiController::class);
     Route::post('dudi/{dudi}/restore', [App\Http\Controllers\DudiController::class, 'restore'])->name('dudi.restore');
     Route::get('dudi/{dudi}/siswa-magang', [App\Http\Controllers\DudiController::class, 'getSiswaMagang'])->name('dudi.siswa-magang');
+    Route::post('dudi/{dudi}/apply', [App\Http\Controllers\DudiController::class, 'apply'])->name('dudi.apply');
+
 });
 
 // User Management Routes
