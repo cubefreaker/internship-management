@@ -18,6 +18,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dudi/{dudi}/siswa-magang', [App\Http\Controllers\DudiController::class, 'getSiswaMagang'])->name('dudi.siswa-magang');
     Route::post('dudi/{dudi}/apply', [App\Http\Controllers\DudiController::class, 'apply'])->name('dudi.apply');
 
+    // Magang Routes
+    Route::resource('magang', App\Http\Controllers\MagangController::class);
 });
 
 // User Management Routes

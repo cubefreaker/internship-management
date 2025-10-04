@@ -20,7 +20,7 @@ import AppLogo from './AppLogo.vue';
 
 // Get school settings from shared data
 const page = usePage();
-const schoolSettings = computed(() => page.props.schoolSettings);
+const schoolSettings = computed<any>(() => (page.props as any).schoolSettings);
 
 const mainNavItems: NavItem[] = [
     {
@@ -34,6 +34,12 @@ const mainNavItems: NavItem[] = [
         href: '/dudi',
         icon: Building2,
         subtitle: 'Manajemen DUDI',
+    },
+    {
+        title: 'Magang',
+        href: '/magang',
+        icon: BookOpen,
+        subtitle: 'Manajemen magang',
     },
     {
         title: 'Pengguna',
