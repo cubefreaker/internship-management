@@ -16,11 +16,9 @@ class Guru extends Model
     protected $fillable = [
         'user_id',
         'nip',
-        'nama_lengkap',
-        'mata_pelajaran',
+        'nama',
+        'alamat',
         'telepon',
-        'email',
-        'status',
     ];
 
     public function user(): BelongsTo

@@ -16,19 +16,13 @@ class Siswa extends Model
     protected $fillable = [
         'user_id',
         'nis',
-        'nama_lengkap',
+        'nama',
         'kelas',
         'jurusan',
-        'tanggal_lahir',
         'alamat',
         'telepon',
-        'email',
-        'status',
     ];
 
-    protected $casts = [
-        'tanggal_lahir' => 'date',
-    ];
 
     public function user(): BelongsTo
     {

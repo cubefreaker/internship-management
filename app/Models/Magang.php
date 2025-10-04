@@ -18,6 +18,7 @@ class Magang extends Model
         'guru_id',
         'tanggal_mulai',
         'tanggal_selesai',
+        'nilai_akhir',
         'status',
         'deskripsi',
     ];
