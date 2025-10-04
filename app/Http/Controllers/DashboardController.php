@@ -7,6 +7,7 @@ use App\Models\Dudi;
 use App\Models\Magang;
 use App\Models\Logbook;
 use App\Models\Guru;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Carbon\Carbon;
@@ -15,7 +16,7 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $user = auth()->user();
+        $user = Auth::user();
         
         if ($user && $user->role === 'guru') {
             return $this->guruDashboard();
@@ -41,7 +42,7 @@ class DashboardController extends Controller
             ->map(function ($magang) {
                 return [
                     'id' => $magang->id,
-                    'studentName' => $magang->siswa->nama_lengkap,
+                    'studentName' => $magang->siswa->nama,
                     'companyName' => $magang->dudi->nama_perusahaan,
                     'startDate' => $magang->tanggal_mulai->format('d/m/Y'),
                     'endDate' => $magang->tanggal_selesai->format('d/m/Y'),
@@ -106,7 +107,7 @@ class DashboardController extends Controller
 
     private function guruDashboard()
     {
-        $user = auth()->user();
+        $user = Auth::user();
         
         // Get the guru record for the authenticated user
          $guru = Guru::where('user_id', $user->id)->first();
@@ -150,7 +151,7 @@ class DashboardController extends Controller
             ->map(function ($magang) {
                 return [
                     'id' => $magang->id,
-                    'studentName' => $magang->siswa->nama_lengkap,
+                    'studentName' => $magang->siswa->nama,
                     'companyName' => $magang->dudi->nama_perusahaan,
                     'startDate' => $magang->tanggal_mulai->format('d/m/Y'),
                     'endDate' => $magang->tanggal_selesai->format('d/m/Y'),
