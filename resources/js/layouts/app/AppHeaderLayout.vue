@@ -2,6 +2,7 @@
 import AppContent from '@/components/AppContent.vue';
 import AppHeader from '@/components/AppHeader.vue';
 import AppShell from '@/components/AppShell.vue';
+import Flash from '@/components/Flash.vue';
 import type { BreadcrumbItemType } from '@/types';
 
 interface Props {
@@ -17,6 +18,7 @@ withDefaults(defineProps<Props>(), {
     <AppShell class="flex-col">
         <AppHeader :breadcrumbs="breadcrumbs" />
         <AppContent>
+            <Flash />
             <slot />
         </AppContent>
     </AppShell>
