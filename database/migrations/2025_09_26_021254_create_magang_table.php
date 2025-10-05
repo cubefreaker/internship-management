@@ -9,9 +9,9 @@ return new class extends Migration {
     {
         Schema::create('magang', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('siswa_id')->constrained('siswa')->onDelete('cascade');
+            $table->foreignId('siswa_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('dudi_id')->constrained('dudi')->onDelete('cascade');
-            $table->foreignId('guru_id')->constrained('guru')->onDelete('cascade');
+            $table->foreignId('guru_id')->nullable()->default(null)->constrained('users')->onDelete('cascade');
             $table->enum('status', ['pending', 'diterima', 'ditolak', 'berlangsung', 'selesai', 'dibatalkan'])->default('pending');
             $table->decimal('nilai_akhir', 5, 2)->nullable();
             $table->date('tanggal_mulai')->nullable();

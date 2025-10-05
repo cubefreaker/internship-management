@@ -4,8 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use App\Models\Dudi;
-use App\Models\Siswa;
-use App\Models\Guru;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -44,69 +42,44 @@ class DatabaseSeeder extends Seeder
         $userFaker = \Faker\Factory::create('id_ID');
 
         // Create 10 guru users (id_ID locale) dan record guru
-        $emailCounter = 1;
-        $gurus = User::factory()->count(10)
-            ->state(function () use ($userFaker, &$emailCounter) {
+        $guruCounter = 1;
+        User::factory()->count(10)
+            ->state(function () use ($userFaker, &$guruCounter) {
                 $name = $userFaker->name();
-                // Bangun email dari nama dan pastikan unik dengan fallback counter
-                $base = strtolower(preg_replace('/\s+/', '.', $name));
-                $localPart = preg_replace('/[^a-z0-9\.]/', '', $base);
-                $email = "$localPart@mail.com";
-                if (\App\Models\User::where('email', $email)->exists()) {
-                    $email = "$localPart.$emailCounter@mail.com";
-                    $emailCounter++;
-                }
+                $email = "guru{$guruCounter}@mail.com";
+                $guruCounter++;
                 return [
                     'name' => $name,
                     'email' => $email,
                     'role' => 'guru',
+                    'alamat' => $userFaker->address(),
+                    'telepon' => $userFaker->numerify('08##########'),
+                    'nip' => $userFaker->numerify('##########'),
                     'email_verified_at' => now(),
                 ];
             })
             ->create();
 
-        foreach ($gurus as $guruUser) {
-            Guru::create([
-                'user_id' => $guruUser->id,
-                'nip' => (string) rand(1000000000, 9999999999),
-                'nama' => $guruUser->name,
-                'alamat' => $userFaker->address(),
-                'telepon' => $userFaker->numerify('08##########'),
-            ]);
-        }
-
         // Create 289 siswa users (id_ID locale) dan record siswa
-        $emailCounterSiswa = 1;
-        $siswas = User::factory()->count(289)
-            ->state(function () use ($userFaker, &$emailCounterSiswa) {
+        $siswaCounter = 1;
+        User::factory()->count(289)
+            ->state(function () use ($userFaker, &$siswaCounter) {
                 $name = $userFaker->name();
-                $base = strtolower(preg_replace('/\s+/', '.', $name));
-                $localPart = preg_replace('/[^a-z0-9\.]/', '', $base);
-                $email = "$localPart@mail.com";
-                if (\App\Models\User::where('email', $email)->exists()) {
-                    $email = "$localPart.$emailCounterSiswa@mail.com";
-                    $emailCounterSiswa++;
-                }
+                $email = "siswa{$siswaCounter}@mail.com";
+                $siswaCounter++;
                 return [
                     'name' => $name,
                     'email' => $email,
                     'role' => 'siswa',
+                    'alamat' => $userFaker->address(),
+                    'telepon' => $userFaker->numerify('08##########'),
+                    'nis' => $userFaker->numerify('##########'),
+                    'kelas' => $userFaker->randomElement(['X', 'XI', 'XII']),
+                    'jurusan' => $userFaker->randomElement(['RPL', 'TKJ']),
                     'email_verified_at' => now(),
                 ];
             })
             ->create();
-
-        foreach ($siswas as $siswaUser) {
-            Siswa::create([
-                'user_id' => $siswaUser->id,
-                'nama' => $siswaUser->name,
-                'nis' => (string) rand(10000000, 99999999),
-                'kelas' => $userFaker->randomElement(['X', 'XI', 'XII']) . ' ' . $userFaker->randomElement(['A', 'B', 'C']),
-                'jurusan' => $userFaker->randomElement(['TKJ', 'RPL', 'MM', 'AKL']),
-                'alamat' => $userFaker->address(),
-                'telepon' => $userFaker->numerify('08##########'),
-            ]);
-        }
 
         // Create 20 DUDI records, owned by admin user
         $faker = \Faker\Factory::create('id_ID');
