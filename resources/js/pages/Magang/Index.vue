@@ -203,11 +203,11 @@ const canFillGrade = computed(() => (editForm.value.status === 'selesai'));
 
           <div v-for="row in magang.data" :key="row.id" class="grid grid-cols-12 px-4 py-4 text-sm">
             <div class="col-span-3">
-              <div class="font-medium text-gray-900">{{ row.siswa?.nama }}</div>
+              <div class="font-medium text-gray-900">{{ row.siswa?.name }}</div>
               <div class="text-xs text-gray-500">{{ row.siswa?.kelas }} • {{ row.siswa?.jurusan }}</div>
             </div>
             <div class="col-span-3">
-              <div class="font-medium text-gray-900">{{ row.guru?.nama || '-' }}</div>
+              <div class="font-medium text-gray-900">{{ row.guru?.name || '-' }}</div>
             </div>
             <div class="col-span-3">
               <div class="font-medium text-gray-900">{{ row.dudi?.nama_perusahaan }}</div>
