@@ -3,9 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Magang;
-use App\Models\Siswa;
+use App\Models\User;
 use App\Models\Dudi;
-use App\Models\Guru;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -19,14 +18,12 @@ class MagangController extends Controller
 
         $query = Magang::with(['siswa', 'guru', 'dudi']);
 
-        // Guru hanya melihat siswa bimbingannya
+        // Guru hanya melihat siswa bimbingannya atau siswa yang belum memiliki guru pembimbing
         if ($user && $user->role === 'guru') {
-            $guru = Guru::where('user_id', $user->id)->first();
-            if ($guru) {
-                $query->where('guru_id', $guru->id);
-            } else {
-                $query->whereRaw('1 = 0');
-            }
+            $query->where(function ($q) use ($user) {
+                $q->where('guru_id', $user->id)
+                  ->orWhere('guru_id', null);
+            });
         }
 
         // Pencarian berdasarkan nama siswa, guru, dan DUDI
@@ -55,35 +52,26 @@ class MagangController extends Controller
 
         // Statistik ringkas seperti pada mockup
         $stats = [
-            'total' => $user->role === 'guru' ? Magang::where('guru_id', $guru->id)->count() : Magang::count(),
-            'aktif' => $user->role === 'guru' ? Magang::where('guru_id', $guru->id)->where('status', 'berlangsung')->count() : Magang::where('status', 'berlangsung')->count(),
-            'selesai' => $user->role === 'guru' ? Magang::where('guru_id', $guru->id)->where('status', 'selesai')->count() : Magang::where('status', 'selesai')->count(),
-            'pending' => $user->role === 'guru' ? Magang::where('guru_id', $guru->id)->where('status', 'pending')->count() : Magang::where('status', 'pending')->count(),
+            'total' => $user->role === 'guru' ? Magang::where('guru_id', $user->id)->count() : Magang::count(),
+            'aktif' => $user->role === 'guru' ? Magang::where('guru_id', $user->id)->where('status', 'berlangsung')->count() : Magang::where('status', 'berlangsung')->count(),
+            'selesai' => $user->role === 'guru' ? Magang::where('guru_id', $user->id)->where('status', 'selesai')->count() : Magang::where('status', 'selesai')->count(),
+            'pending' => $user->role === 'guru' ? Magang::where('guru_id', $user->id)->where('status', 'pending')->count() : Magang::where('status', 'pending')->count(),
         ];
 
         // Options for selects in Add modal
-        $siswaOptions = Siswa::select('id', 'nama')->orderBy('nama')->get();
-        $dudiOptions = Dudi::select('id', 'nama_perusahaan')->orderBy('nama_perusahaan')->get();
-        $guruOptionsQuery = Guru::select('id', 'nama', 'user_id')->orderBy('nama');
+        $siswaOptions = User::where('role', 'siswa')->select('id', 'name as nama')->orderBy('name')->get();
+        $dudiOptions = Dudi::select('id', 'nama_perusahaan as nama')->orderBy('nama_perusahaan')->get();
+        $guruOptions = $user->role === 'guru' ? [] : User::where('role', 'guru')->select('id', 'name as nama')->orderBy('name')->get();
         // If guru logged in, limit options to themselves
-        if ($user && $user->role === 'guru') {
-            $guru = Guru::where('user_id', $user->id)->first();
-            if ($guru) {
-                $guruOptionsQuery->where('id', $guru->id);
-            } else {
-                $guruOptionsQuery->whereRaw('1 = 0');
-            }
-        }
-        $guruOptions = $guruOptionsQuery->get();
 
         return Inertia::render('Magang/Index', [
             'magang' => $magang,
             'stats' => $stats,
             'filters' => $request->only(['search', 'status', 'per_page']),
             'siswaOptions' => $siswaOptions,
-            'guruOptions' => $guruOptions->map(fn($g) => ['id' => $g->id, 'nama' => $g->nama]),
-            'dudiOptions' => $dudiOptions->map(fn($d) => ['id' => $d->id, 'nama' => $d->nama_perusahaan]),
-            'currentGuruId' => ($user && $user->role === 'guru') ? optional(Guru::where('user_id', $user->id)->first())->id : null,
+            'guruOptions' => $guruOptions,
+            'dudiOptions' => $dudiOptions,
+            'currentGuruId' => ($user && $user->role === 'guru') ? $user->id : null,
         ]);
     }
 
@@ -111,11 +99,7 @@ class MagangController extends Controller
         // Guru pembimbing: jika admin, gunakan pilihan; jika guru, otomatis dari akun login
         $guruId = null;
         if ($user && $user->role === 'guru') {
-            $guruModel = Guru::where('user_id', $user->id)->first();
-            if (!$guruModel) {
-                return back()->withErrors(['guru_id' => 'Akun guru belum terhubung dengan data guru. Hubungi admin.'])->withInput();
-            }
-            $guruId = $guruModel->id;
+            $guruId = $user->id;
         } else {
             $guruId = $request->get('guru_id');
         }
@@ -151,10 +135,9 @@ class MagangController extends Controller
             return back()->withErrors($validator)->withInput();
         }
 
-        // Guru hanya bisa mengelola siswanya
+        // Guru hanya bisa mengelola siswanya atau siswa yang belum memiliki guru pembimbing
         if ($user && $user->role === 'guru') {
-            $guru = Guru::where('user_id', $user->id)->first();
-            if (!$guru || $magang->guru_id !== $guru->id) {
+            if ($magang->guru_id !== $user->id && $magang->guru_id !== null) {
                 abort(403);
             }
         }
@@ -172,6 +155,10 @@ class MagangController extends Controller
             $update['status'] = 'berlangsung';
         }
 
+        if($user->role === 'guru' && $magang->guru_id == null) {
+            $update['guru_id'] = $user->id;
+        }
+
         $magang->update($update);
 
         return redirect()->route('magang.index')->with('success', 'Data magang berhasil diperbarui');
@@ -181,8 +168,7 @@ class MagangController extends Controller
     {
         $user = Auth::user();
         if ($user && $user->role === 'guru') {
-            $guru = Guru::where('user_id', $user->id)->first();
-            if (!$guru || $magang->guru_id !== $guru->id) {
+            if ($magang->guru_id !== $user->id) {
                 abort(403);
             }
         }

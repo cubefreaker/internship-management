@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Siswa;
 use App\Models\Dudi;
 use App\Models\Magang;
 use App\Models\Logbook;
-use App\Models\Guru;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -28,7 +27,7 @@ class DashboardController extends Controller
     private function adminDashboard()
     {
         // Get statistics
-        $totalStudents = Siswa::count();
+        $totalStudents = User::where('role', 'siswa')->count();
         $dudiPartners = Dudi::count();
         $activeInterns = Magang::where('status', 'aktif')->count();
         $todayLogbooks = Logbook::whereDate('tanggal', Carbon::today())->count();
@@ -107,10 +106,7 @@ class DashboardController extends Controller
 
     private function guruDashboard()
     {
-        $user = Auth::user();
-        
-        // Get the guru record for the authenticated user
-         $guru = Guru::where('user_id', $user->id)->first();
+        $guru = Auth::user();
         
         if (!$guru) {
             // If no guru record found, return empty dashboard

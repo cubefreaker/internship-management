@@ -30,7 +30,7 @@ class Magang extends Model
 
     public function siswa(): BelongsTo
     {
-        return $this->belongsTo(Siswa::class);
+        return $this->belongsTo(User::class, 'siswa_id');
     }
 
     public function dudi(): BelongsTo
@@ -40,6 +40,6 @@ class Magang extends Model
 
     public function guru(): BelongsTo
     {
-        return $this->belongsTo(Guru::class);
+        return $this->belongsTo(User::class, 'guru_id');
     }
 }

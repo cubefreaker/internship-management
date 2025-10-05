@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Dudi;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
@@ -68,10 +69,8 @@ class DudiController extends Controller
 
     private function siswaIndex(Request $request)
     {
-        $user = Auth::user();
-        // Ambil record siswa dari user
-        $siswa = \App\Models\Siswa::where('user_id', $user ? $user->id : null)->first();
-
+        $siswa = Auth::user();
+        
         // Query DUDI aktif yang tersedia untuk siswa
         $query = Dudi::with(['user'])
             ->where('status', 'aktif');
@@ -119,7 +118,7 @@ class DudiController extends Controller
     private function guruIndex(Request $request)
     {
         $user = Auth::user();
-        $guru = \App\Models\Guru::where('user_id', $user ? $user->id : null)->first();
+        $guru = $user->role === 'guru' ? $user : null;
         
         if (!$guru) {
             return Inertia::render('Dudi/Index', [
@@ -360,20 +359,14 @@ class DudiController extends Controller
             return redirect()->route('dudi.index')->with('error', 'Hanya siswa yang dapat mendaftar magang.');
         }
 
-        // Ambil record siswa dari user
-        $siswa = \App\Models\Siswa::where('user_id', $user->id)->first();
-        if (!$siswa) {
-            return redirect()->route('dudi.index')->with('error', 'Data siswa tidak ditemukan.');
-        }
-
         // Batasi maksimal 3 pendaftaran
-        $count = \App\Models\Magang::where('siswa_id', $siswa->id)->count();
+        $count = \App\Models\Magang::where('siswa_id', $user->id)->count();
         if ($count >= 3) {
             return redirect()->route('dudi.index')->with('error', 'Maksimal pendaftaran magang adalah 3 DUDI.');
         }
 
         // Cegah duplikasi pendaftaran ke DUDI yang sama saat masih pending/berlangsung
-        $existing = \App\Models\Magang::where('siswa_id', $siswa->id)
+        $existing = \App\Models\Magang::where('siswa_id', $user->id)
             ->where('dudi_id', $dudi->id)
             ->whereIn('status', ['pending', 'berlangsung'])
             ->first();
@@ -381,19 +374,9 @@ class DudiController extends Controller
             return redirect()->route('dudi.index')->with('error', 'Anda sudah mendaftar atau sedang magang di DUDI ini.');
         }
 
-        // Tentukan guru_id: pilih guru dengan beban magang terendah saat ini
-        $gurus = \App\Models\Guru::all();
-        if ($gurus->isEmpty()) {
-            return redirect()->route('dudi.index')->with('error', 'Data guru belum tersedia. Silakan hubungi admin.');
-        }
-        $guruId = $gurus->sortBy(function ($g) {
-            return \App\Models\Magang::where('guru_id', $g->id)->count();
-        })->first()->id;
-
         \App\Models\Magang::create([
-            'siswa_id' => $siswa->id,
+            'siswa_id' => $user->id,
             'dudi_id' => $dudi->id,
-            'guru_id' => $guruId,
             'status' => 'pending',
         ]);
 
