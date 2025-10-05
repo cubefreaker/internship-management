@@ -15,6 +15,7 @@ import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/vue3';
 import { BookOpen, Folder, LayoutGrid, Building2, Users, Settings, School } from 'lucide-vue-next';
+import { NotebookPen } from 'lucide-vue-next';
 import { computed } from 'vue';
 import AppLogo from './AppLogo.vue';
 
@@ -22,7 +23,7 @@ import AppLogo from './AppLogo.vue';
 const page = usePage();
 const schoolSettings = computed<any>(() => (page.props as any).schoolSettings);
 
-const mainNavItems: NavItem[] = [
+const allNavItems: NavItem[] = [
     {
         title: 'Dashboard',
         href: dashboard(),
@@ -42,6 +43,12 @@ const mainNavItems: NavItem[] = [
         subtitle: 'Manajemen magang',
     },
     {
+        title: 'Jurnal Harian',
+        href: '/logbook',
+        icon: NotebookPen,
+        subtitle: 'Catatan harian magang',
+    },
+    {
         title: 'Pengguna',
         href: '/users',
         icon: Users,
@@ -54,6 +61,16 @@ const mainNavItems: NavItem[] = [
         subtitle: 'Konfigurasi sekolah',
     },
 ];
+
+const auth = computed(() => (page.props as any).auth);
+const role = computed(() => auth.value?.user?.role);
+const mainNavItems = computed<NavItem[]>(() => {
+    if (role.value === 'guru' || role.value === 'siswa') {
+        // Sembunyikan menu admin untuk guru
+        return allNavItems.filter((item) => item.title !== 'Pengguna' && item.title !== 'Pengaturan Sekolah');
+    }
+    return allNavItems;
+});
 
 const footerNavItems: NavItem[] = [];
 </script>
@@ -73,7 +90,7 @@ const footerNavItems: NavItem[] = [];
         </SidebarHeader>
 
         <SidebarContent>
-            <NavMain :items="mainNavItems" />
+            <NavMain :items="mainNavItems as any" />
         </SidebarContent>
 
         <SidebarFooter>

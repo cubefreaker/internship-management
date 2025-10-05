@@ -22,6 +22,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('magang', App\Http\Controllers\MagangController::class);
 });
 
+// Logbook Routes
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::resource('logbook', App\Http\Controllers\LogbookController::class);
+    Route::post('logbook/{id}/verify', [App\Http\Controllers\LogbookController::class, 'verify'])->name('logbook.verify');
+});
+
+
 // User Management Routes
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('users', App\Http\Controllers\UserController::class);

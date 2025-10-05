@@ -34,7 +34,7 @@ class Logbook extends Model
 
     public function siswa()
     {
-        return $this->hasOneThrough(Siswa::class, Magang::class, 'id', 'id', 'magang_id', 'siswa_id');
+        return $this->hasOneThrough(User::class, Magang::class, 'id', 'id', 'magang_id', 'siswa_id');
     }
 
     public function dudi()
